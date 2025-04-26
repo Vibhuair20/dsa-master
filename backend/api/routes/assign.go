@@ -16,6 +16,7 @@ type response struct {
 	Generate 	string 				`json:"generate"`
 }
 
+
 func GenerateCalender(c *fiber.Ctx) error{
 	body := new(request)
 
@@ -24,7 +25,8 @@ func GenerateCalender(c *fiber.Ctx) error{
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "cannot parse JSON"})
 	}
 
-	//saving the ip in the database u
+	//saving the ip in the database
+
 
 
 	// checking all the responses
