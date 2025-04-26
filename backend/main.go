@@ -5,7 +5,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/Vibhuair20/dsa-master/routes"
+	"github.com/Vibhuair20/dsa-master/backend/api/database"
+	"github.com/Vibhuair20/dsa-master/backend/api/routes"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/joho/godotenv"
@@ -24,6 +25,8 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
+
+	database.CreateClient()
 
 	app := fiber.New()
 
