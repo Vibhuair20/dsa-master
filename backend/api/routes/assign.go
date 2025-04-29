@@ -1,47 +1,78 @@
 package routes
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"fmt"
+
+	"github.com/Vibhuair20/dsa-master/backend/api/database"
+	"github.com/Vibhuair20/dsa-master/backend/api/helpers"
+	"github.com/asaskevich/govalidator"
+	"github.com/go-redis/redis"
+	"github.com/gofiber/fiber/v2"
+)
 
 type request struct {
+	URL string 	`json:"url"`
 	Email    string          `json:"email"`
-	Topics map[string]bool `json:"topics"`
-	Dates  []string        `json:"dates"`
+	Topics map[string]bool 	 `json:"topics"`
+	Dates  []string        	 `json:"dates"`
 }
 
 type response struct {
-	URL 		string 				`json:"url"`
+	Email 		string 				`json:"email"`
 	Topics 		map[string]bool 	`json:"topics"`
 	Dates 		[]string 			`json:"dates"`
 	Sample 		map[string]bool 	`json:"sample"`
-	Generate 	string 				`json:"generate"`
+	URL string `json:"url"`
+	// Generate 	string 				`json:"generate"`
 }
 
 
 func GenerateCalender(c *fiber.Ctx) error{
 	body := new(request)
 
-	// body request from the user to send the request
-	if err := c.BodyParser(body), err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "cannot parse JSON"})
+	if err := c.BodyParser(body), err != nil{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "cannot parse the json"})
 	}
 
-	// selecting the options
-
-	// applying the logic to the functions
-	// if possible yes or not
-
-	// then it predicts out the schedule for the revision and print it in the frontend
-
-
-	// if yes then it triggers another function with the button
-	// the button is enabled
-	// after enabling the button it asks one more time with the details
+	// check for the email and store it in the local redis
 	
-	// when the button is click proceed
+	// it retreives the email address from the dataset
+	r2 := database.CreateClient(1)
+	defer r2.Close()
 
-	// google calender with the api is integrated and added to the calender
+	//getting the email address
+	val, err := r2.Get(Database.Ctx, body.Email).Result()
+	
+	// first check the email is valid or not
+	if !govalidator.IsEmail(body.Email){
+		return c.Status(fiber.StatusBadRequest).JSIN(fiber.Mao{"error": "invalid email"})
+	}
 
+	if err != nil && err != redis.Nil{
+		fmt.Println("error getting the value from the redis", err)
+	}
 
+	
+	// if ip is not found in redis
+	if err == redis.Nil{
+		_ = r2.Set(database.Ctx, body.Email, body.Email, 0).Err()
+		if err != nil{
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "failed to store email in redis"})
+		}
+	}
 
+	//! now checking the url for the question
+
+	// check if the url provided is real or valid or not
+	if !govalidator.IsURL(body.URL) {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "the url provided here is not correct"})
+	}
+	// check for domain erroi
+
+	if !helpers.RemoveDomainError(body.URL){
+		return c.Status(fiber.StatusServiceUnavailable).JSON(fiber.Map{"error": "not possoble"})
+	}
+	// enforce http , ssl
+	body.URL = helpers.EnforceHTTP(body.URL)
 
 }

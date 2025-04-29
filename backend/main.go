@@ -5,23 +5,19 @@ import (
 	"log"
 	"os"
 
-	"github.com/Vibhuair20/dsa-master/backend/api/database"
+	"github.com/Vibhuair20/dsa-master/backend/api/auth"
 	"github.com/Vibhuair20/dsa-master/backend/api/routes"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/joho/godotenv"
-	"gorm.io/gorm"
 )
 
 func setupRoutes(app *fiber.App) {
 	app.Get("/:api/resolve/v1", routes.Resolve)
-	app.Post("/:api/assign/v1", routes.assignCodes)
+	app.Post("/:api/assign/v1", routes.GenerateCalender) // Fixed: was 'assignCodes', should match function name
 	app.Get("/:url/admin/v1", routes.adminBoard)
-
-}
-
-type repository struct {
-	DB *gorm.DB
+	app.Get("/login", auth.GoogleLogin)            // Fixed: removed parentheses, functions are passed as references
+	app.Get("/auth/callback", auth.GoogleCallBack) // Added callback route which was missing
 }
 
 func main() {
@@ -30,8 +26,6 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
-
-	database.CreateClient()
 
 	app := fiber.New()
 
