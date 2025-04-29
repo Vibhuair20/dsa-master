@@ -3,7 +3,7 @@ package routes
 import "github.com/gofiber/fiber/v2"
 
 type request struct {
-	URL    string          `json:"url"`
+	Email    string          `json:"email"`
 	Topics map[string]bool `json:"topics"`
 	Dates  []string        `json:"dates"`
 }
@@ -25,16 +25,23 @@ func GenerateCalender(c *fiber.Ctx) error{
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "cannot parse JSON"})
 	}
 
-	//saving the ip in the database
+	// selecting the options
+
+	// applying the logic to the functions
+	// if possible yes or not
+
+	// then it predicts out the schedule for the revision and print it in the frontend
 
 
+	// if yes then it triggers another function with the button
+	// the button is enabled
+	// after enabling the button it asks one more time with the details
+	
+	// when the button is click proceed
 
-	// checking all the responses
-		// if not valid move ahead and print out a error in the frontend
-		// if not move ahead
-	// store the responses in the form of the map
-	// check with the responses and pop out a button to generate it 
-	// use the google api to generate in the google map and use it for furthur use
+	// google calender with the api is integrated and added to the calender
+
+
 
 
 }
